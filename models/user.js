@@ -44,6 +44,7 @@ const userSchema = new mongoose.Schema({
   pendingRequest: [{type: mongoose.Types.ObjectId}],
   posts: [{ type: postSchema }],
   isAdmin: { type: Boolean, default: false },
+  image: { type: String, default: "" },
 })
 
 userSchema.methods.generateAuthToken = function () {
@@ -54,7 +55,8 @@ userSchema.methods.generateAuthToken = function () {
     aboutMe: this.aboutMe,
     email: this.email,
     password: this.password,
-    isAdmin: this.isAdmin
+    isAdmin: this.isAdmin, 
+    image: this.image,
      }, config.get('jwtSecret'));
  };
  
@@ -68,6 +70,7 @@ const validateUser = (user) => {
     aboutMe: Joi.string().min(0).max(255),
     email: Joi.string().min(5).max(255).required().email(),
     password: Joi.string().min(5).max(1024).required(),
+    image: Joi.string(),
   });
   return schema.validate(user);
 }
