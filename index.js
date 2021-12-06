@@ -18,7 +18,7 @@ app.use(express.json());
 app.use('/api/users', users);
 app.use('/api/auth', auth);
 
-app.use('upload/images', express.static(path.join('uploads', 'images')));
+app.use('uploads/images', express.static(path.join('uploads', 'images')));
 app.use((error, req, res, next) => {
   if (req.file) {
     fs.unlink(req.file.path, (err) => {
