@@ -13,6 +13,10 @@ const fileUpload = multer({
         destination: (req, file, cb) => {
             cb(null, "uploads/images");
         },
+        filename: (req, file, cb) => {
+            const ext = MIME_TYPE_MAP[file.mimetype];
+            cb(null, uuid.v1() + "." + ext);
+        }
     }), 
     fileFilter: (req, file, cb) => {
         const isValid = !!MIME_TYPE_MAP[file.mimetype];
