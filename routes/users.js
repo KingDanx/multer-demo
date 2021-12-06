@@ -10,7 +10,7 @@ const fileUpload = require('../middleware/file-upload');
 
 
 //PASCAL GUIDE - creates new user and uploads image via middleware!!!!
-router.post("/", 
+router.post("/register", 
   fileUpload.single("image"), 
   async (req, res) => {
     try {
@@ -20,10 +20,10 @@ router.post("/",
       if (user) return res.status(400).send('User already registered.');
       const salt = await bcrypt.genSalt(10);
       user = new User({
-        name: req.body.name,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
         email: req.body.email,
         password: await bcrypt.hash(req.body.password, salt),
-        isAdmin: req.body.isAdmin,
         image: req.file.path
       });
       await user.save();
@@ -33,7 +33,8 @@ router.post("/",
         .header("access-control-expose-hdeaders", "x-auth-token")
         .send({
           _id: user._id,
-          name: user.name,
+          firstName: user.firstName,
+          lastName: user.lastName,
           email: user.email,
           image: user.image,
         });
@@ -46,36 +47,36 @@ router.post("/",
 
 
 
-// add user
-router.post('/register', async (req, res) => {
-  try{
-    const { error } = validateUser(req.body);
+// // add user
+// router.post('/register', async (req, res) => {
+//   try{
+//     const { error } = validateUser(req.body);
 
-    if (error) return res.status(400).send(console.log("fail line 15 backend") /*error.details[0].message*/);
+//     if (error) return res.status(400).send(console.log("fail line 15 backend") /*error.details[0].message*/);
 
-    let user = await User.findOne ({ email: req.body.email });
-    if (user) return res.status(400).send('User already registered.');
+//     let user = await User.findOne ({ email: req.body.email });
+//     if (user) return res.status(400).send('User already registered.');
 
-    const salt = await bcrypt.genSalt(10);
-    user = new User({
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      password: await bcrypt.hash(req.body.password, salt)
-    });
+//     const salt = await bcrypt.genSalt(10);
+//     user = new User({
+//       firstName: req.body.firstName,
+//       lastName: req.body.lastName,
+//       email: req.body.email,
+//       password: await bcrypt.hash(req.body.password, salt)
+//     });
 
-    await user.save();
+//     await user.save();
 
-    const token = user.generateAuthToken();
+//     const token = user.generateAuthToken();
 
-       return res
-       .header('x-auth-token', token)
-       .header('access-control-expose-headers', 'x-auth-token')
-       .send({ _id: user._id, firstName: user.firstName, email: user.email });
-  } catch (ex) {
-    return res.status(500).send(`Internal Server Error: ${ex}`);
-  }
-})
+//        return res
+//        .header('x-auth-token', token)
+//        .header('access-control-expose-headers', 'x-auth-token')
+//        .send({ _id: user._id, firstName: user.firstName, email: user.email });
+//   } catch (ex) {
+//     return res.status(500).send(`Internal Server Error: ${ex}`);
+//   }
+// })
 
 router.post("/login",  async (req, res) => {
   try {
